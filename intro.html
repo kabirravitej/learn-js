@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intro To JS — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .lesson {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        padding: clamp(2rem, 6vw, 5rem);
+        max-width: 40rem;
+      }
+
+      .lesson-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin: 0 0 2rem;
+        color: var(--deep);
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        text-decoration: none;
+      }
+
+      .lesson-brand:hover {
+        opacity: 0.85;
+      }
+
+      .lesson-brand img {
+        width: 2.4rem;
+        height: auto;
+      }
+
+      .lesson h1 {
+        margin: 0 0 1rem;
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3rem);
+        letter-spacing: -0.03em;
+      }
+
+      .lesson p {
+        margin: 0;
+        font-size: 1.15rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+    </div>
+
+    <main class="lesson">
+      <a class="lesson-brand" href="index.html" aria-label="Learn JS home">
+        <img src="logo.png" alt="" width="820" height="841" />
+        <span>Learn JS</span>
+      </a>
+      <h1>Intro To JS</h1>
+      <p>Lesson content coming next. This page is ready for the first tutorial.</p>
+    </main>
+  </body>
+</html>

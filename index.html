@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn JS — JavaScript from the ground up</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="glow glow-a" data-parallax="0.18"></div>
+      <div class="glow glow-b" data-parallax="0.28"></div>
+      <div class="glow glow-c" data-parallax="0.12"></div>
+      <pre class="code-backdrop" data-parallax="0.35">
+<span class="kw">const</span> curiosity = <span class="str">"ready"</span>;
+<span class="kw">function</span> <span class="fn">learn</span>() {
+  <span class="kw">return</span> curiosity + <span class="str">" to code"</span>;
+}
+<span class="cm">// your journey starts here</span>
+console.<span class="fn">log</span>(learn());
+      </pre>
+    </div>
+
+    <div class="float-layer" aria-hidden="true">
+      <span class="chip chip-1" data-parallax="0.45">let name = "Milo";</span>
+      <span class="chip chip-2" data-parallax="0.55">console.log("hi");</span>
+      <span class="chip chip-3" data-parallax="0.4">if (ready) start();</span>
+      <span class="chip chip-4" data-parallax="0.6">array.map(fn)</span>
+      <span class="chip chip-5" data-parallax="0.5">document.querySelector</span>
+      <span class="chip chip-6" data-parallax="0.42">addEventListener</span>
+    </div>
+
+    <header class="hero">
+      <img
+        class="milo"
+        src="milo.png"
+        alt="Milo, the Learn JS mascot"
+        width="676"
+        height="369"
+        data-parallax="0.22"
+      />
+      <div class="hero-copy" data-parallax="0.08">
+        <p class="brand">
+          <img class="logo" src="logo.png" alt="" width="820" height="841" />
+          <span>Learn JS</span>
+        </p>
+        <h1>JavaScript, explained simply.</h1>
+        <p class="lede">
+          Clear lessons, real examples, and a path that builds confidence one concept at a time.
+        </p>
+        <a class="cta" href="intro.html">Intro To JS</a>
+        <blockquote class="hero-quote">
+          <p>
+            “Any application that can be written in JavaScript, will eventually be written in
+            JavaScript.”
+          </p>
+          <cite>— Jeff Atwood, co-founder of Stack Overflow</cite>
+        </blockquote>
+      </div>
+      <p class="scroll-hint" aria-hidden="true">Scroll to explore</p>
+    </header>
+
+    <main>
+      <section class="about" aria-labelledby="about-heading">
+        <div class="about-intro" data-reveal>
+          <h2 id="about-heading">Peek inside Learn JS</h2>
+          <p>
+            A beginner path through JavaScript — short lessons, real examples, and zero
+            pressure to know everything on day one.
+          </p>
+        </div>
+
+        <div class="scatter" aria-label="Illustrated overview of the site">
+          <figure class="scatter-photo photo-a" data-parallax="0.12">
+            <img
+              src="photos/titlepage/code-2.webp"
+              alt="Laptop open to a code editor with JavaScript and HTML on screen"
+            />
+          </figure>
+          <aside class="note note-a" data-parallax="0.2">
+            <strong>Learn by doing</strong>
+            <span>Type along in a real editor — same tools developers use every day.</span>
+          </aside>
+          <aside class="note note-d" data-parallax="0.16">
+            <strong>Step by step</strong>
+            <span>Each idea builds on the last so nothing feels random.</span>
+          </aside>
+
+          <figure class="scatter-photo photo-b" data-parallax="0.18">
+            <img
+              src="photos/titlepage/code-1.webp"
+              alt="Close-up of colorful JavaScript source code on a dark screen"
+            />
+          </figure>
+          <aside class="note note-b" data-parallax="0.24">
+            <strong>Real JS, early</strong>
+            <span>No endless theory. You meet actual code in the first lessons.</span>
+          </aside>
+          <aside class="note note-e" data-parallax="0.14">
+            <strong>Start tiny</strong>
+            <span>Hit Intro To JS when you are ready — five minutes is enough.</span>
+          </aside>
+
+          <figure class="scatter-photo photo-c" data-parallax="0.1">
+            <img
+              src="photos/titlepage/code-3.jpeg"
+              alt="Illustrated learners interacting with glowing code and digital interfaces"
+            />
+          </figure>
+          <aside class="note note-c" data-parallax="0.22">
+            <strong>Made for beginners</strong>
+            <span>Friendly pacing, clear visuals, and no assumed jargon.</span>
+          </aside>
+        </div>
+      </section>
+
+      <section class="path" aria-labelledby="path-heading">
+        <div class="section-copy" data-reveal>
+          <h2 id="path-heading">Your learning path</h2>
+          <p>
+            Follow a clear route from “what is JavaScript?” to writing small interactive pages.
+            Skip around later — but start here if you are brand new.
+          </p>
+        </div>
+
+        <ol class="path-track">
+          <li class="path-stop" data-reveal data-parallax="0.08">
+            <span class="path-num">01</span>
+            <h3>Intro To JS</h3>
+            <p>What JavaScript is, where it runs, and why websites need it.</p>
+          </li>
+          <li class="path-stop" data-reveal data-parallax="0.12">
+            <span class="path-num">02</span>
+            <h3>Values &amp; variables</h3>
+            <p>Store text, numbers, and true/false — the building blocks of every program.</p>
+          </li>
+          <li class="path-stop" data-reveal data-parallax="0.16">
+            <span class="path-num">03</span>
+            <h3>Decisions</h3>
+            <p>Use if/else so your code can react to different situations.</p>
+          </li>
+          <li class="path-stop" data-reveal data-parallax="0.1">
+            <span class="path-num">04</span>
+            <h3>Functions</h3>
+            <p>Package reusable actions you can call whenever you need them.</p>
+          </li>
+          <li class="path-stop" data-reveal data-parallax="0.14">
+            <span class="path-num">05</span>
+            <h3>The page</h3>
+            <p>Talk to HTML with the DOM — change text, colors, and clicks.</p>
+          </li>
+          <li class="path-stop" data-reveal data-parallax="0.18">
+            <span class="path-num">06</span>
+            <h3>Tiny projects</h3>
+            <p>Put it together: buttons, counters, quizzes, and small games.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="concepts" aria-labelledby="concepts-heading">
+        <div class="concepts-bg" data-parallax="0.25" aria-hidden="true"></div>
+        <div class="section-copy" data-reveal>
+          <h2 id="concepts-heading">Ideas you will meet</h2>
+          <p>
+            These words show up a lot in JavaScript. You do not need to memorize them —
+            you will learn them by using them.
+          </p>
+        </div>
+        <div class="concept-grid">
+          <article class="concept" data-reveal data-parallax="0.1">
+            <h3>Variables</h3>
+            <p>Named boxes that hold values you can reuse and update.</p>
+            <code>let score = 0;</code>
+          </article>
+          <article class="concept" data-reveal data-parallax="0.14">
+            <h3>Strings</h3>
+            <p>Text wrapped in quotes — names, messages, anything you say.</p>
+            <code>"Hello, Milo"</code>
+          </article>
+          <article class="concept" data-reveal data-parallax="0.18">
+            <h3>Numbers</h3>
+            <p>Math for scores, prices, timers, and pixel positions.</p>
+            <code>price * 1.1</code>
+          </article>
+          <article class="concept" data-reveal data-parallax="0.12">
+            <h3>Booleans</h3>
+            <p>True or false — the yes/no answers that power decisions.</p>
+            <code>isReady === true</code>
+          </article>
+          <article class="concept" data-reveal data-parallax="0.16">
+            <h3>Arrays</h3>
+            <p>Ordered lists: todos, colors, high scores, player names.</p>
+            <code>["a", "b", "c"]</code>
+          </article>
+          <article class="concept" data-reveal data-parallax="0.2">
+            <h3>Objects</h3>
+            <p>Group related details together under one name.</p>
+            <code>{ name: "Milo" }</code>
+          </article>
+        </div>
+      </section>
+
+      <section class="tools" aria-labelledby="tools-heading">
+        <div class="tools-copy" data-reveal>
+          <h2 id="tools-heading">Where you can practice</h2>
+          <p>
+            You do not need a fancy setup to begin. Use free online playgrounds or a desktop
+            editor — pick whatever feels easiest and start typing.
+          </p>
+        </div>
+        <figure class="tools-visual" data-parallax="0.15" data-reveal>
+          <img
+            src="photos/titlepage/code-4.png"
+            alt="Apps and websites where you can code: JsFiddle, Cursor AI, VS Code, Programiz, Replit, and OneCompiler"
+          />
+        </figure>
+      </section>
+
+      <section class="milo-story" aria-labelledby="milo-heading">
+        <div class="milo-story-visual" data-parallax="0.2">
+          <img src="logo.png" alt="Milo standing and holding a carrot" width="820" height="841" />
+        </div>
+        <div class="milo-story-copy" data-reveal>
+          <h2 id="milo-heading">Meet Milo</h2>
+          <p>
+            Milo is the Learn JS guide — curious, patient, and always ready to try one more
+            line of code. When a concept feels sticky, imagine Milo peeking over your screen
+            and saying: “Try a tiny example. Then another.”
+          </p>
+          <p>
+            You will see Milo around the site as a reminder that learning to code is supposed
+            to feel playful, not scary.
+          </p>
+        </div>
+      </section>
+
+      <section class="lesson-shape" aria-labelledby="lesson-shape-heading">
+        <div class="section-copy" data-reveal>
+          <h2 id="lesson-shape-heading">How a lesson feels</h2>
+          <p>Every page follows the same calm rhythm so you always know what comes next.</p>
+        </div>
+        <div class="rhythm">
+          <article class="rhythm-step" data-reveal data-parallax="0.1">
+            <span class="rhythm-label">Read</span>
+            <h3>A short idea</h3>
+            <p>One concept in plain language — usually a few paragraphs, not a textbook chapter.</p>
+          </article>
+          <article class="rhythm-step" data-reveal data-parallax="0.14">
+            <span class="rhythm-label">See</span>
+            <h3>A real example</h3>
+            <p>Look at a small code snippet that does one clear thing you can picture.</p>
+          </article>
+          <article class="rhythm-step" data-reveal data-parallax="0.18">
+            <span class="rhythm-label">Try</span>
+            <h3>Type it yourself</h3>
+            <p>Change a value, break it on purpose, then fix it. That is how it sticks.</p>
+          </article>
+          <article class="rhythm-step" data-reveal data-parallax="0.12">
+            <span class="rhythm-label">Next</span>
+            <h3>Move forward</h3>
+            <p>When it clicks, continue. If not, re-read — there is no timer and no grade.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tips" aria-labelledby="tips-heading">
+        <div class="section-copy" data-reveal>
+          <h2 id="tips-heading">Beginner tips from Milo</h2>
+          <p>Small habits that make learning JavaScript much smoother.</p>
+        </div>
+        <ul class="tip-list">
+          <li data-reveal data-parallax="0.1">
+            <strong>Type, don’t only read.</strong>
+            Your fingers learn patterns your eyes skip past.
+          </li>
+          <li data-reveal data-parallax="0.14">
+            <strong>Break things on purpose.</strong>
+            Errors are clues, not failures — the console is your friend.
+          </li>
+          <li data-reveal data-parallax="0.18">
+            <strong>Keep sessions short.</strong>
+            Fifteen focused minutes beats two confused hours.
+          </li>
+          <li data-reveal data-parallax="0.12">
+            <strong>Name things clearly.</strong>
+            <code>playerScore</code> beats <code>x</code> every time.
+          </li>
+          <li data-reveal data-parallax="0.16">
+            <strong>Celebrate tiny wins.</strong>
+            First <code>console.log</code> counts. First button click counts more.
+          </li>
+          <li data-reveal data-parallax="0.2">
+            <strong>Come back tomorrow.</strong>
+            Sleep is part of learning — ideas settle overnight.
+          </li>
+        </ul>
+      </section>
+
+      <section class="showcase" aria-labelledby="showcase-heading">
+        <div class="showcase-marquee" aria-hidden="true">
+          <div class="showcase-track">
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-1.webp" alt="" />
+            </figure>
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-2.webp" alt="" />
+            </figure>
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-3.jpeg" alt="" />
+            </figure>
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-5.jpeg" alt="" />
+            </figure>
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-6.avif" alt="" />
+            </figure>
+            <figure class="showcase-slide">
+              <img src="photos/titlepage/code-7.jpg" alt="" />
+            </figure>
+          </div>
+        </div>
+        <div class="showcase-copy" data-reveal>
+          <h2 id="showcase-heading">From blank page to living page</h2>
+          <p>
+            JavaScript is the layer that makes websites respond — clicks, animations, forms,
+            games, and little surprises. Learn JS helps you build that muscle from the first lesson.
+          </p>
+        </div>
+      </section>
+
+      <section class="final-cta" aria-labelledby="final-cta-heading">
+        <div class="final-cta-inner" data-reveal>
+          <img class="final-logo" src="logo.png" alt="" width="820" height="841" />
+          <h2 id="final-cta-heading">Ready when you are</h2>
+          <p>
+            Start with Intro To JS. Bring curiosity. Milo will meet you there.
+          </p>
+          <a class="cta" href="intro.html">Intro To JS</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        <img src="logo.png" alt="" width="820" height="841" />
+        Learn JS — JavaScript for beginners, with Milo.
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
