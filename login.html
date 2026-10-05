@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="auth.css" />
+  </head>
+  <body class="auth-body">
+    <div class="atmosphere" aria-hidden="true">
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+      <div class="glow glow-c"></div>
+    </div>
+
+    <div class="auth-shell">
+      <a class="auth-brand" href="index.html">
+        <img src="logo.png" alt="" width="820" height="841" />
+        <span>Learn JS</span>
+      </a>
+
+      <div class="auth-panel">
+        <h1>Log in</h1>
+        <p class="auth-lede">
+          Enter your username. SQL finds your ID, then checks your password against your account.
+        </p>
+
+        <form class="auth-form" id="login-form">
+          <div class="auth-field">
+            <label for="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              placeholder="@mikelearnz"
+              required
+            />
+          </div>
+
+          <div class="auth-field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <p class="auth-error" id="error" hidden></p>
+          <button class="cta" type="submit" id="submit">Log in</button>
+        </form>
+
+        <p class="auth-foot">
+          New here? <a href="register.html">Register</a>
+        </p>
+      </div>
+    </div>
+
+    <script src="auth-client.js"></script>
+    <script src="progress.js"></script>
+    <script>
+      const form = document.getElementById("login-form");
+      const error = document.getElementById("error");
+      const submit = document.getElementById("submit");
+
+      if (window.LearnJSAuth.isLoggedIn()) {
+        window.location.replace("learn.html");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        error.hidden = true;
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        submit.disabled = true;
+        submit.textContent = "Checking…";
+        try {
+          await window.LearnJSAuth.login(username, password);
+          window.location.href = "learn.html";
+        } catch (err) {
+          error.textContent =
+            err.message ||
+            "Could not log in. Start the Learn JS server with: npm start --prefix server";
+          error.hidden = false;
+          submit.disabled = false;
+          submit.textContent = "Log in";
+        }
+      });
+    </script>
+  </body>
+</html>

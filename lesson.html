@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lesson — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="learn.css" />
+    <link rel="stylesheet" href="lesson-ui.css" />
+  </head>
+  <body class="learn-body">
+    <div class="lesson-shell anim-fade-up">
+      <div class="lesson-top">
+        <a href="learn.html"><span class="material-symbols-outlined">arrow_back</span> Path</a>
+        <p class="lesson-kicker" id="lesson-type">concept</p>
+      </div>
+      <p class="lesson-kicker" id="lesson-unit">Unit</p>
+      <h1 id="lesson-title" class="anim-fade-up">Lesson</h1>
+      <p class="lesson-meta" id="lesson-minutes">5–8 min</p>
+      <div id="lesson-body"></div>
+    </div>
+
+    <script src="auth-client.js"></script>
+    <script src="curriculum.js"></script>
+    <script src="curriculum-enrich.js"></script>
+    <script src="progress.js"></script>
+    <script src="milo-ai.js"></script>
+    <script src="lesson.js"></script>
+    <script>
+      window.LearnJSAuth.requireLogin("intro.html");
+    </script>
+  </body>
+</html>

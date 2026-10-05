@@ -1,0 +1,44 @@
+/**
+ * Learn JS — Google Apps Script OTP mailer
+ * Deploy as Web app: Execute as Me, Who has access: Anyone
+ *
+ * Replace your old doPost with this, then Deploy → Manage deployments → New version.
+ */
+function doPost(e) {
+  var requestData = JSON.parse(e.postData.contents);
+  var studentEmail = requestData.email || requestData.to || requestData.to_email;
+  var codeToSend = requestData.otp;
+  var username = requestData.username || "learner";
+  var subject = requestData.subject || ("Welcome to Learn JS! " + username);
+
+  // Prefer HTML built by the Learn JS server (matches the website look)
+  var htmlBodyContent = requestData.html;
+  if (!htmlBodyContent) {
+    htmlBodyContent =
+      '<div style="margin:0;padding:28px 16px;background:#e7f3ec;">' +
+      '<div style="max-width:440px;margin:0 auto;background:#f7fcf9;border:2px solid #0b1f18;border-radius:14px;overflow:hidden;">' +
+      '<div style="padding:18px 22px;background:linear-gradient(135deg,#9fe3c0 0%,#c8f560 100%);border-bottom:2px solid #0b1f18;">' +
+      '<p style="margin:0;font-family:Georgia,serif;font-size:22px;font-weight:800;color:#0b1f18;">Learn JS</p>' +
+      '<p style="margin:6px 0 0;font-family:Georgia,serif;font-size:15px;font-weight:700;color:#12231c;">Welcome to Learn JS! ' +
+      username +
+      "</p></div>" +
+      '<div style="padding:22px;font-family:Segoe UI,system-ui,sans-serif;color:#12231c;">' +
+      '<p style="margin:0 0 12px;font-size:15px;line-height:1.5;color:#2a4036;">You’re in. Use this code to finish creating your account:</p>' +
+      '<p style="margin:0 0 16px;text-align:center;"><span style="display:inline-block;padding:14px 22px;border:2px solid #0b1f18;border-radius:10px;background:#c8f560;font-family:Menlo,monospace;font-size:28px;font-weight:800;letter-spacing:0.28em;color:#0b1f18;">' +
+      codeToSend +
+      "</span></p>" +
+      '<p style="margin:0;font-size:13px;color:#2a4036;">Expires in 10 minutes. If you didn’t sign up for Learn JS, ignore this email.</p>' +
+      "</div>" +
+      '<div style="padding:14px 22px 18px;border-top:1px solid rgba(11,31,24,0.12);font-size:12px;color:#2a4036;">— Milo & Learn JS</div>' +
+      "</div></div>";
+  }
+
+  GmailApp.sendEmail(studentEmail, subject, "Welcome to Learn JS! " + username + "\n\nYour code is: " + codeToSend, {
+    htmlBody: htmlBodyContent,
+    name: "Learn JS",
+  });
+
+  return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(
+    ContentService.MimeType.JSON
+  );
+}

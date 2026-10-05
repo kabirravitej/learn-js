@@ -785,6 +785,22 @@ main {
   font-size: 0.95rem;
 }
 
+.site-footer-copy {
+  margin-top: 0.65rem !important;
+  flex-wrap: wrap;
+  font-size: 0.88rem !important;
+}
+
+.site-footer-copy a {
+  color: var(--deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-footer-copy a:hover {
+  text-decoration: underline;
+}
+
 .site-footer img {
   width: 1.75rem;
   height: auto;

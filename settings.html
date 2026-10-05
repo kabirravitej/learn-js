@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="learn.css" />
+    <link rel="stylesheet" href="auth.css" />
+    <link rel="stylesheet" href="workspace.css" />
+  </head>
+  <body class="learn-body">
+    <div class="learn-app is-workspace">
+      <nav class="learn-nav" aria-label="Primary">
+        <a class="learn-brand" href="index.html">
+          <img src="logo.png" alt="" width="820" height="841" />
+          <span>Learn JS</span>
+        </a>
+        <a href="learn.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">home</span><span>Learn</span></a
+        >
+        <a href="workspace.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">terminal</span><span>Workspace</span></a
+        >
+        <a href="knowledge.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">style</span><span>Knowledge</span></a
+        >
+        <a href="index.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span><span>Home</span></a
+        >
+        <div class="account-menu">
+          <button type="button" class="account-chip" id="account-chip" hidden aria-haspopup="menu" aria-expanded="false">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            <span id="account-label">Account</span>
+            <span class="material-symbols-outlined account-caret" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="account-dropdown" id="account-dropdown" role="menu" hidden>
+            <button type="button" data-account-settings role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">settings</span> Settings
+            </button>
+            <button type="button" class="is-danger" data-account-logout role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span> Log Out
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <main class="learn-main settings-main">
+        <header class="unit-banner anim-fade-up">
+          <div>
+            <p>Account</p>
+            <h1>Settings</h1>
+          </div>
+        </header>
+
+        <section class="settings-panel anim-fade-up">
+          <h2>Profile</h2>
+          <p><strong>Username</strong> <span id="settings-username">—</span></p>
+          <p><strong>Email</strong> <span id="settings-email">—</span></p>
+          <p><strong>ID</strong> <span id="settings-id">—</span></p>
+          <p class="auth-hint">Your ID is how the database finds you. Login still uses your username.</p>
+        </section>
+
+        <section class="settings-panel">
+          <h2>Progress snapshot</h2>
+          <p><strong>XP</strong> <span id="settings-xp">0</span></p>
+          <p><strong>Momentum</strong> <span id="settings-momentum">0</span></p>
+          <p><strong>Charges</strong> <span id="settings-charges">0</span></p>
+          <p><strong>Knowledge cards</strong> <span id="settings-cards">0</span></p>
+        </section>
+
+        <section class="settings-panel settings-danger">
+          <h2>Delete account</h2>
+          <p>
+            This permanently removes your username, email, progress, and sessions from the
+            database.
+          </p>
+          <p>
+            Your User ID is
+            <strong id="delete-id-display" class="delete-id-pill">—</strong>
+          </p>
+          <form class="auth-form" id="delete-form">
+            <div class="auth-field">
+              <label for="confirm-id">Type your User ID to confirm</label>
+              <input
+                id="confirm-id"
+                name="confirmId"
+                type="text"
+                autocomplete="off"
+                placeholder="#19238"
+                required
+              />
+            </div>
+            <p class="auth-error" id="delete-error" hidden></p>
+            <button class="cta cta-danger" type="submit" id="delete-submit">Delete my account</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="auth-client.js"></script>
+    <script src="account-menu.js"></script>
+    <script src="progress.js"></script>
+    <script>
+      (async () => {
+        const user = await window.LearnJSAccountMenu.requireAndMount({ active: "settings" });
+        if (!user) return;
+        const state = window.LearnJSProgress.load();
+        document.getElementById("settings-username").textContent = user.username;
+        document.getElementById("settings-email").textContent = user.email || "—";
+        document.getElementById("settings-id").textContent = user.displayId;
+        document.getElementById("delete-id-display").textContent = user.displayId;
+        document.getElementById("confirm-id").placeholder = user.displayId;
+        document.getElementById("settings-xp").textContent = state.xp;
+        document.getElementById("settings-momentum").textContent = state.momentum;
+        document.getElementById("settings-charges").textContent = state.momentumCharges;
+        document.getElementById("settings-cards").textContent = state.knowledgeCards.length;
+
+        const form = document.getElementById("delete-form");
+        const error = document.getElementById("delete-error");
+        const submit = document.getElementById("delete-submit");
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          error.hidden = true;
+          const confirmId = document.getElementById("confirm-id").value.trim();
+          submit.disabled = true;
+          submit.textContent = "Deleting…";
+          try {
+            await window.LearnJSAuth.deleteAccount(confirmId);
+            window.location.replace("intro.html");
+          } catch (err) {
+            error.textContent = err.message || "Could not delete account";
+            error.hidden = false;
+            submit.disabled = false;
+            submit.textContent = "Delete my account";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

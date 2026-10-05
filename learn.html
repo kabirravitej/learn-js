@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn Path — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="learn.css" />
+    <link rel="stylesheet" href="lesson-ui.css" />
+  </head>
+  <body class="learn-body">
+    <div class="learn-app">
+      <nav class="learn-nav" aria-label="Primary">
+        <a class="learn-brand" href="index.html">
+          <img src="logo.png" alt="" width="820" height="841" />
+          <span>Learn JS</span>
+        </a>
+        <a class="is-active" href="learn.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">home</span><span>Learn</span></a
+        >
+        <a href="workspace.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">terminal</span><span>Workspace</span></a
+        >
+        <a href="knowledge.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">style</span><span>Knowledge</span></a
+        >
+        <a href="index.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span><span>Home</span></a
+        >
+        <div class="account-menu">
+          <button type="button" class="account-chip" id="account-chip" hidden aria-haspopup="menu" aria-expanded="false">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            <span id="account-label">Account</span>
+            <span class="material-symbols-outlined account-caret" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="account-dropdown" id="account-dropdown" role="menu" hidden>
+            <button type="button" data-account-settings role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">settings</span> Settings
+            </button>
+            <button type="button" class="is-danger" data-account-logout role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span> Log Out
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <main class="learn-main">
+        <header class="unit-banner anim-fade-up">
+          <div>
+            <p id="unit-kicker">Section 1 · Unit 1</p>
+            <h1 id="unit-title">How JavaScript Got Here</h1>
+            <p id="unit-blurb" style="text-transform: none; letter-spacing: 0; font-weight: 600; margin-top: 0.35rem">
+              Many quick checks per lesson. Pause anytime.
+            </p>
+          </div>
+          <a class="guidebook" href="index.html#path-heading"
+            ><span class="material-symbols-outlined">menu_book</span> Guidebook</a
+          >
+        </header>
+
+        <div class="path-board" id="path-board">
+          <img class="path-milo" id="path-milo" src="milo.png" alt="" width="676" height="369" />
+          <ol class="path-list" id="path-list"></ol>
+        </div>
+      </main>
+
+      <aside class="learn-aside" aria-label="Progress">
+        <div class="stat-row">
+          <span class="stat-pill" title="Experience points"
+            ><span class="material-symbols-outlined">bolt</span> <span id="stat-xp">0</span> XP</span
+          >
+          <span class="stat-pill" title="Daily Momentum streak"
+            ><span class="material-symbols-outlined">local_fire_department</span>
+            <span id="stat-momentum">0</span></span
+          >
+          <span class="stat-pill" title="Momentum Charges"
+            ><span class="material-symbols-outlined">battery_charging_full</span>
+            <span id="stat-charges">0</span></span
+          >
+          <span class="stat-pill" title="Knowledge cards"
+            ><span class="material-symbols-outlined">style</span> <span id="stat-cards">0</span></span
+          >
+        </div>
+
+        <div class="panel anim-fade-up">
+          <h2><span class="material-symbols-outlined">calendar_month</span> Daily pace</h2>
+          <p>
+            Lessons are about 5–8 minutes with lots of quick questions. Show up, learn a chunk, sleep
+            on it, come back. Missing a day spends a Momentum Charge before your streak resets.
+          </p>
+          <a class="cta" id="next-cta" href="lesson.html">Continue</a>
+        </div>
+
+        <div class="panel">
+          <h2><span class="material-symbols-outlined">route</span> Unit rhythm</h2>
+          <ul class="legend">
+            <li>
+              <span class="material-symbols-outlined">lightbulb</span> Concept — learn the basics
+            </li>
+            <li>
+              <span class="material-symbols-outlined">psychology</span> Memory — go a layer deeper
+            </li>
+            <li>
+              <span class="material-symbols-outlined">quiz</span> Practice — speak flashcards
+            </li>
+            <li>
+              <span class="material-symbols-outlined">inventory_2</span> Chest — XP, Momentum,
+              charges, or a card
+            </li>
+            <li>
+              <span class="material-symbols-outlined">flag</span> Overview — recap + what’s next
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h2><span class="material-symbols-outlined">auto_stories</span> Latest knowledge</h2>
+          <div id="cards-preview"></div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="auth-client.js"></script>
+    <script src="account-menu.js"></script>
+    <script src="curriculum.js"></script>
+    <script src="curriculum-enrich.js"></script>
+    <script src="progress.js"></script>
+    <script src="learn.js"></script>
+  </body>
+</html>

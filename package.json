@@ -1,0 +1,14 @@
+{
+  "name": "learn-js",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Learn JS — beginner JavaScript path with Milo",
+  "scripts": {
+    "install:server": "npm install --prefix server",
+    "start": "npm start --prefix server",
+    "dev": "npm run dev --prefix server"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

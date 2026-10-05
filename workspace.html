@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workspace — Learn JS</title>
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="learn.css" />
+    <link rel="stylesheet" href="workspace.css" />
+  </head>
+  <body class="learn-body">
+    <div class="learn-app is-workspace">
+      <nav class="learn-nav" aria-label="Primary">
+        <a class="learn-brand" href="index.html">
+          <img src="logo.png" alt="" width="820" height="841" />
+          <span>Learn JS</span>
+        </a>
+        <a href="learn.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">home</span><span>Learn</span></a
+        >
+        <a class="is-active" href="workspace.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">terminal</span><span>Workspace</span></a
+        >
+        <a href="knowledge.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">style</span><span>Knowledge</span></a
+        >
+        <a href="index.html"
+          ><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span><span>Home</span></a
+        >
+        <div class="account-menu">
+          <button type="button" class="account-chip" id="account-chip" hidden aria-haspopup="menu" aria-expanded="false">
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            <span id="account-label">Account</span>
+            <span class="material-symbols-outlined account-caret" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="account-dropdown" id="account-dropdown" role="menu" hidden>
+            <button type="button" data-account-settings role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">settings</span> Settings
+            </button>
+            <button type="button" class="is-danger" data-account-logout role="menuitem">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span> Log Out
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <main class="workspace-main">
+        <header class="workspace-toolbar">
+          <div>
+            <p class="workspace-kicker">Sandbox</p>
+            <h1>Workspace</h1>
+          </div>
+          <div class="workspace-actions">
+            <button type="button" class="ws-btn" id="ws-reset">
+              <span class="material-symbols-outlined">restart_alt</span> Reset
+            </button>
+            <button type="button" class="ws-btn ws-run" id="ws-run">
+              <span class="material-symbols-outlined">play_arrow</span> Run
+            </button>
+          </div>
+        </header>
+
+        <div class="workspace-grid">
+          <section class="workspace-editors" aria-label="Code editors">
+            <div class="ws-tabs" role="tablist">
+              <button type="button" class="ws-tab is-active" data-pane="html" role="tab">HTML</button>
+              <button type="button" class="ws-tab" data-pane="css" role="tab">CSS</button>
+              <button type="button" class="ws-tab" data-pane="js" role="tab">JavaScript</button>
+            </div>
+            <textarea id="ws-html" class="ws-code is-active" spellcheck="false" aria-label="HTML"></textarea>
+            <textarea id="ws-css" class="ws-code" spellcheck="false" aria-label="CSS" hidden></textarea>
+            <textarea id="ws-js" class="ws-code" spellcheck="false" aria-label="JavaScript" hidden></textarea>
+          </section>
+
+          <section class="workspace-preview" aria-label="Preview and console">
+            <div class="ws-preview-frame-wrap">
+              <iframe id="ws-preview" title="Preview" sandbox="allow-scripts"></iframe>
+            </div>
+            <div class="ws-console" id="ws-console" aria-live="polite"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <aside class="milo-workspace" id="milo-workspace" aria-label="Milo voice coach">
+      <img src="milo.png" alt="Milo" width="676" height="369" />
+      <div class="milo-workspace-panel">
+        <p class="milo-workspace-label">
+          <span class="material-symbols-outlined" aria-hidden="true">record_voice_over</span> Milo
+        </p>
+        <p class="milo-workspace-status" id="milo-status">Ready to help — tap the mic and talk.</p>
+        <p class="milo-workspace-text" id="milo-reply"></p>
+        <button type="button" class="ws-mic" id="milo-mic">
+          <span class="material-symbols-outlined" aria-hidden="true">mic</span>
+          <span id="milo-mic-label">Tap to talk</span>
+        </button>
+      </div>
+    </aside>
+
+    <script src="auth-client.js"></script>
+    <script src="account-menu.js"></script>
+    <script src="milo-voice.js"></script>
+    <script src="milo-ai.js"></script>
+    <script src="workspace.js"></script>
+  </body>
+</html>

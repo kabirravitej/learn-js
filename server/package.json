@@ -1,0 +1,19 @@
+{
+  "name": "learn-js-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
+    "dotenv": "^16.6.1",
+    "nodemailer": "^10.0.14",
+    "resend": "^6.32.0"
+  }
+}
