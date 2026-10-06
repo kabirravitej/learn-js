@@ -14,6 +14,8 @@ const db = new DatabaseSync(dbPath);
 db.exec(`
   PRAGMA journal_mode = WAL;
   PRAGMA foreign_keys = ON;
+  PRAGMA busy_timeout = 5000;
+  PRAGMA secure_delete = ON;
 
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
@@ -167,16 +169,28 @@ export function createSession(userId) {
   return token;
 }
 
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 export function getSessionUser(token) {
-  if (!token) return null;
+  if (!token || typeof token !== "string" || token.length < 32 || token.length > 128) {
+    return null;
+  }
+  if (!/^[a-f0-9]+$/i.test(token)) return null;
   const row = db
     .prepare(
-      `SELECT u.* FROM sessions s
+      `SELECT u.*, s.created_at AS session_created
+       FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token = ?`
     )
     .get(token);
-  return row || null;
+  if (!row) return null;
+  const created = Date.parse(row.session_created);
+  if (Number.isFinite(created) && Date.now() - created > SESSION_TTL_MS) {
+    db.prepare("DELETE FROM sessions WHERE token = ?").run(token);
+    return null;
+  }
+  return row;
 }
 
 export function deleteSession(token) {

@@ -5,7 +5,7 @@
   root.units.forEach((unit) => {
     unit.nodes.forEach((node) => {
       (node.steps || []).forEach((step) => {
-        if (step.type === "teach" || step.hint) return;
+        if (step.type === "teach" || step.type === "code" || step.hint) return;
         if (step.type === "tf") {
           step.hint = step.answer
             ? "Hint from Milo: this matches what we just covered — pick True."

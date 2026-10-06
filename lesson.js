@@ -150,6 +150,9 @@ function updateProgress(wrap, index, total) {
 
 function getHint(step) {
   if (step.hint) return step.hint;
+  if (step.type === "code") {
+    return "Hint from Milo: run a small console.log and check the Output box.";
+  }
   if (step.type === "tf") {
     return step.answer
       ? "Hint from Milo: think about whether this statement matches what we just learned — it's true!"
@@ -259,6 +262,151 @@ function fallbackSteps(node) {
   return steps;
 }
 
+async function runLearnerCode(code) {
+  const logs = [];
+  const fakeConsole = {
+    log: (...args) => {
+      logs.push(
+        args
+          .map((v) => {
+            if (typeof v === "string") return v;
+            if (typeof v === "undefined") return "undefined";
+            try {
+              return JSON.stringify(v);
+            } catch {
+              return String(v);
+            }
+          })
+          .join(" ")
+      );
+    },
+    info: (...args) => fakeConsole.log(...args),
+    warn: (...args) => fakeConsole.log(...args),
+    error: (...args) => fakeConsole.log(...args),
+  };
+  try {
+    // AsyncFunction so await works; microtasks/timers can settle before we grade.
+    const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+    // eslint-disable-next-line no-new-func
+    const fn = new AsyncFunction("console", `"use strict";\n${code}`);
+    await fn(fakeConsole);
+    await Promise.resolve();
+    if (/\bsetTimeout\b|\bsetInterval\b/.test(String(code || ""))) {
+      await new Promise((r) => window.setTimeout(r, 40));
+    }
+    return { ok: true, logs, error: null };
+  } catch (err) {
+    return { ok: false, logs, error: err?.message || String(err) };
+  }
+}
+
+function codePasses(step, code, result) {
+  if (!result.ok) return false;
+  if (Array.isArray(step.mustInclude)) {
+    const src = String(code || "");
+    if (!step.mustInclude.every((piece) => src.includes(piece))) return false;
+  }
+  const expected = step.expectLogs || [];
+  if (!expected.length) return result.logs.length > 0;
+  // Expected lines must appear in order (allowing extra logs in between)
+  let cursor = 0;
+  for (const line of result.logs) {
+    if (cursor < expected.length && String(line) === String(expected[cursor])) {
+      cursor += 1;
+    }
+  }
+  return cursor === expected.length;
+}
+
+function renderCodeStep(step, stage, feedback, session, onPass) {
+  const prompt = document.createElement("p");
+  prompt.className = "flash-prompt";
+  prompt.textContent = step.prompt;
+
+  const editor = document.createElement("textarea");
+  editor.className = "code-editor";
+  editor.spellcheck = false;
+  editor.setAttribute("aria-label", "JavaScript editor");
+  editor.value = step.starter || "";
+
+  const out = document.createElement("pre");
+  out.className = "code-output";
+  out.textContent = "Output will show here after you Run.";
+
+  const actions = document.createElement("div");
+  actions.className = "code-actions";
+
+  const runBtn = document.createElement("button");
+  runBtn.type = "button";
+  runBtn.className = "cta cta-secondary select-submit";
+  runBtn.innerHTML = `${icon("play_arrow")} Run`;
+
+  const selectBtn = document.createElement("button");
+  selectBtn.type = "button";
+  selectBtn.className = "cta select-submit";
+  selectBtn.disabled = true;
+  selectBtn.innerHTML = `${icon("check_circle")} SELECT`;
+
+  let lastPass = false;
+
+  runBtn.addEventListener("click", async () => {
+    runBtn.disabled = true;
+    const result = await runLearnerCode(editor.value);
+    runBtn.disabled = false;
+    out.replaceChildren();
+    if (result.error) {
+      const err = document.createElement("span");
+      err.className = "code-error";
+      err.textContent = `Error: ${result.error}`;
+      out.appendChild(err);
+      lastPass = false;
+      selectBtn.disabled = true;
+      return;
+    }
+    out.textContent = result.logs.length ? result.logs.join("\n") : "(no output)";
+    lastPass = codePasses(step, editor.value, result);
+    selectBtn.disabled = !lastPass;
+    if (lastPass) {
+      const ok = document.createElement("span");
+      ok.className = "code-ok";
+      ok.textContent = "\nLooks good — press SELECT.";
+      out.appendChild(ok);
+    }
+  });
+
+  selectBtn.addEventListener("click", async () => {
+    if (!lastPass || selectBtn.disabled) return;
+    selectBtn.disabled = true;
+    runBtn.disabled = true;
+    editor.readOnly = true;
+    session.graded += 1;
+    session.correct += 1;
+    feedback.className = "step-feedback-panel is-good anim-fade-up";
+    feedback.innerHTML = `<p class="step-feedback">${icon("celebration")} Correct!</p>`;
+    speak("Correct!");
+    window.setTimeout(onPass, 700);
+  });
+
+  const tip = document.createElement("p");
+  tip.className = "lesson-copy code-tip";
+  tip.textContent = "Write real JS. Run it. When the output matches, press SELECT.";
+
+  actions.append(runBtn, selectBtn);
+  stage.append(prompt, tip, editor, out, actions);
+
+  // Wrong-path help: if they SELECT without passing — button stays disabled.
+  // Offer Milo hint button
+  const hintBtn = document.createElement("button");
+  hintBtn.type = "button";
+  hintBtn.className = "text-btn";
+  hintBtn.innerHTML = `${icon("lightbulb")} Hint from Milo`;
+  hintBtn.addEventListener("click", () => {
+    const hint = step.hint || getHint(step);
+    showMiloCoach(hint);
+  });
+  stage.appendChild(hintBtn);
+}
+
 function renderSteps(node, body, session) {
   const steps = node.steps && node.steps.length ? node.steps : fallbackSteps(node);
   let index = 0;
@@ -306,6 +454,11 @@ function renderSteps(node, body, session) {
       next.innerHTML = `${icon("arrow_forward")} Continue`;
       next.addEventListener("click", advance);
       stage.append(p, next);
+      return;
+    }
+
+    if (step.type === "code") {
+      renderCodeStep(step, stage, feedback, session, advance);
       return;
     }
 
@@ -419,6 +572,81 @@ function renderSteps(node, body, session) {
 }
 
 function renderPractice(node, body, session) {
+  const warmups = node.codeWarmups || [];
+  if (warmups.length) {
+    // Run coding warmups as a mini step list, then flashcards.
+    const steps = [
+      {
+        type: "teach",
+        text: "Code lab first — write real JavaScript. Then we’ll do quick flashcards.",
+      },
+      ...warmups,
+      {
+        type: "teach",
+        text: "Nice coding. Next: flashcard checks.",
+      },
+    ];
+    const wrapBody = body;
+    const sessionRef = session;
+    let index = 0;
+    let selectedIndex = null;
+    const progressUi = createProgress(steps.length);
+    const stage = document.createElement("div");
+    stage.className = "step-stage";
+    const feedback = document.createElement("div");
+    feedback.className = "step-feedback-panel";
+    wrapBody.append(progressUi, stage, feedback);
+
+    function finishWarmups() {
+      wrapBody.innerHTML = "";
+      renderPracticeCards(node, wrapBody, sessionRef);
+    }
+
+    function advance() {
+      hideMiloCoach();
+      window.speechSynthesis?.cancel();
+      selectedIndex = null;
+      feedback.innerHTML = "";
+      feedback.className = "step-feedback-panel";
+      index += 1;
+      if (index >= steps.length) {
+        finishWarmups();
+        return;
+      }
+      showStepLocal();
+    }
+
+    function showStepLocal() {
+      const step = steps[index];
+      updateProgress(progressUi, index, steps.length);
+      stage.innerHTML = "";
+      stage.classList.add("anim-fade-up");
+      feedback.innerHTML = "";
+      if (step.type === "teach") {
+        const p = document.createElement("p");
+        p.className = "lesson-copy";
+        p.textContent = step.text;
+        const next = document.createElement("button");
+        next.type = "button";
+        next.className = "cta anim-pop";
+        next.innerHTML = `${icon("arrow_forward")} Continue`;
+        next.addEventListener("click", advance);
+        stage.append(p, next);
+        return;
+      }
+      if (step.type === "code") {
+        renderCodeStep(step, stage, feedback, sessionRef, advance);
+      }
+    }
+
+    showStepLocal();
+    return;
+  }
+
+  renderPracticeCards(node, body, session);
+}
+
+function renderPracticeCards(node, body, session) {
   const cards = node.cards || [];
   let index = 0;
   let listening = false;
@@ -684,7 +912,7 @@ function finishNode(node, reward) {
   window.location.href = "learn.html";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function startLesson() {
   const id = new URLSearchParams(window.location.search).get("id");
   const found = id ? findNode(id) : null;
   if (!found) {
@@ -692,4 +920,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   renderLesson(found.unit, found.node);
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startLesson);
+} else {
+  startLesson();
+}

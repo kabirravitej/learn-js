@@ -34,11 +34,15 @@ export function validateUsername(username) {
 }
 
 export function validatePassword(password) {
-  if (typeof password !== "string" || password.length < 6) {
-    return "Password must be at least 6 characters";
+  if (typeof password !== "string" || password.length < 8) {
+    return "Password must be at least 8 characters";
   }
   if (password.length > 128) {
     return "Password is too long";
+  }
+  // Light complexity — stops empty-ish passwords, not a fortress
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+    return "Password needs at least one letter and one number";
   }
   return null;
 }

@@ -4,18 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings — Learn JS</title>
+    <script src="theme-boot.js"></script>
     <link rel="icon" href="logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="learn.css" />
     <link rel="stylesheet" href="auth.css" />
     <link rel="stylesheet" href="workspace.css" />
+    <link rel="stylesheet" href="effects.css" />
+    <link rel="stylesheet" href="cursor.css" />
   </head>
   <body class="learn-body">
     <div class="learn-app is-workspace">
@@ -62,7 +65,71 @@
         </header>
 
         <section class="settings-panel anim-fade-up">
-          <h2>Profile</h2>
+          <h2>
+            <span class="material-symbols-outlined" aria-hidden="true">palette</span>
+            Appearance
+          </h2>
+          <p class="settings-lede">Pick a look for Learn JS. Saves on this device.</p>
+          <div class="theme-picker" role="radiogroup" aria-label="Color theme">
+            <button
+              type="button"
+              class="theme-option"
+              data-theme-pick="light"
+              role="radio"
+              aria-checked="false"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">sunny</span>
+              <span class="theme-option-label">Light</span>
+              <span class="theme-option-swatch" aria-hidden="true"></span>
+            </button>
+            <button
+              type="button"
+              class="theme-option"
+              data-theme-pick="dark"
+              role="radio"
+              aria-checked="false"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">moon_stars</span>
+              <span class="theme-option-label">Dark</span>
+              <span class="theme-option-swatch" aria-hidden="true"></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="settings-panel anim-fade-up">
+          <h2>
+            <span class="material-symbols-outlined" aria-hidden="true">speed</span>
+            Performance
+          </h2>
+          <p class="settings-lede">
+            Keep the vibe, lighten the load. Balanced is the default. Lite feels snappiest on slower
+            machines.
+          </p>
+          <div class="theme-picker fx-picker" role="radiogroup" aria-label="Visual effects">
+            <button type="button" class="theme-option" data-fx-pick="full" role="radio" aria-checked="false">
+              <span class="material-symbols-outlined" aria-hidden="true">auto_awesome</span>
+              <span class="theme-option-label">Full</span>
+            </button>
+            <button type="button" class="theme-option" data-fx-pick="balanced" role="radio" aria-checked="false">
+              <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+              <span class="theme-option-label">Balanced</span>
+            </button>
+            <button type="button" class="theme-option" data-fx-pick="lite" role="radio" aria-checked="false">
+              <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
+              <span class="theme-option-label">Lite</span>
+            </button>
+            <button type="button" class="theme-option" data-fx-pick="off" role="radio" aria-checked="false">
+              <span class="material-symbols-outlined" aria-hidden="true">motion_photos_off</span>
+              <span class="theme-option-label">Off</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="settings-panel anim-fade-up">
+          <h2>
+            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+            Profile
+          </h2>
           <p><strong>Username</strong> <span id="settings-username">—</span></p>
           <p><strong>Email</strong> <span id="settings-email">—</span></p>
           <p><strong>ID</strong> <span id="settings-id">—</span></p>
@@ -70,7 +137,10 @@
         </section>
 
         <section class="settings-panel">
-          <h2>Progress snapshot</h2>
+          <h2>
+            <span class="material-symbols-outlined" aria-hidden="true">monitoring</span>
+            Progress snapshot
+          </h2>
           <p><strong>XP</strong> <span id="settings-xp">0</span></p>
           <p><strong>Momentum</strong> <span id="settings-momentum">0</span></p>
           <p><strong>Charges</strong> <span id="settings-charges">0</span></p>
@@ -78,7 +148,10 @@
         </section>
 
         <section class="settings-panel settings-danger">
-          <h2>Delete account</h2>
+          <h2>
+            <span class="material-symbols-outlined" aria-hidden="true">warning</span>
+            Delete account
+          </h2>
           <p>
             This permanently removes your username, email, progress, and sessions from the
             database.
@@ -106,6 +179,9 @@
       </main>
     </div>
 
+    <script src="theme.js"></script>
+    <script src="effects.js"></script>
+    <script src="cursor.js"></script>
     <script src="auth-client.js"></script>
     <script src="account-menu.js"></script>
     <script src="progress.js"></script>
@@ -123,6 +199,49 @@
         document.getElementById("settings-momentum").textContent = state.momentum;
         document.getElementById("settings-charges").textContent = state.momentumCharges;
         document.getElementById("settings-cards").textContent = state.knowledgeCards.length;
+
+        const options = [...document.querySelectorAll("[data-theme-pick]")];
+        function syncThemeUI() {
+          const current = window.LearnJSTheme.get();
+          options.forEach((btn) => {
+            const on = btn.getAttribute("data-theme-pick") === current;
+            btn.classList.toggle("is-active", on);
+            btn.setAttribute("aria-checked", on ? "true" : "false");
+          });
+        }
+        options.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            window.LearnJSTheme.set(btn.getAttribute("data-theme-pick"));
+            syncThemeUI();
+          });
+        });
+        syncThemeUI();
+
+        const fxOptions = [...document.querySelectorAll("[data-fx-pick]")];
+        function syncFxUI() {
+          const current =
+            document.documentElement.getAttribute("data-fx") ||
+            localStorage.getItem("learnjs-fx") ||
+            "balanced";
+          fxOptions.forEach((btn) => {
+            const on = btn.getAttribute("data-fx-pick") === current;
+            btn.classList.toggle("is-active", on);
+            btn.setAttribute("aria-checked", on ? "true" : "false");
+          });
+        }
+        fxOptions.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const next = btn.getAttribute("data-fx-pick");
+            if (window.LearnJSEffects?.setMode) {
+              window.LearnJSEffects.setMode(next);
+            } else {
+              localStorage.setItem("learnjs-fx", next);
+              window.location.reload();
+            }
+          });
+        });
+        syncFxUI();
+        document.addEventListener("learnjs:theme", syncThemeUI);
 
         const form = document.getElementById("delete-form");
         const error = document.getElementById("delete-error");

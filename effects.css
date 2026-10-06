@@ -1,0 +1,965 @@
+/* ============================================================
+   Learn JS — global visual effects (all pages)
+   ============================================================ */
+
+/* —— Soft grid mesh —— */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image:
+    linear-gradient(rgba(200, 245, 96, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 245, 96, 0.55) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 20%, transparent 75%);
+}
+
+html[data-theme="dark"] body::after {
+  opacity: 0.055;
+}
+
+/* —— Soft grain (static — animated SVG noise was a major FPS killer) —— */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.045) 0.6px, transparent 0.7px);
+  background-size: 3px 3px;
+  contain: strict;
+}
+
+html[data-theme="dark"] body::before {
+  opacity: 0.05;
+  mix-blend-mode: soft-light;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 0.6px, transparent 0.7px);
+}
+
+html[data-fx="lite"] body::before,
+html[data-fx="off"] body::before {
+  display: none;
+}
+
+/* —— Cursor spotlight —— */
+.fx-spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 70;
+  background: radial-gradient(
+    520px circle at var(--spot-x, 50%) var(--spot-y, 40%),
+    var(--learn-glow, rgba(200, 245, 96, 0.18)),
+    transparent 55%
+  );
+  opacity: 0.55;
+  transition: opacity 0.4s ease;
+}
+
+html[data-theme="light"] .fx-spotlight {
+  opacity: 0.35;
+  background: radial-gradient(
+    560px circle at var(--spot-x, 50%) var(--spot-y, 40%),
+    rgba(200, 245, 96, 0.22),
+    rgba(159, 227, 192, 0.08) 40%,
+    transparent 60%
+  );
+}
+
+/* —— Floating orbs (injected) —— */
+.fx-orbs {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fx-orb {
+  position: absolute;
+  border-radius: 50%;
+  /* Soft edges via gradient — avoid filter:blur (very expensive) */
+  opacity: 0.5;
+  will-change: transform;
+  mix-blend-mode: screen;
+  contain: strict;
+  transform: translateZ(0);
+}
+
+html[data-theme="light"] .fx-orb {
+  mix-blend-mode: multiply;
+  opacity: 0.38;
+}
+
+html[data-fx="lite"] .fx-orb {
+  animation: none !important;
+  opacity: 0.28;
+}
+
+html[data-fx="off"] .fx-orbs,
+html[data-fx="off"] .fx-spotlight,
+html[data-fx="off"] .fx-sparkles,
+html[data-fx="off"] .fx-crumbs {
+  display: none !important;
+}
+
+html[data-fx="lite"] .fx-spotlight,
+html[data-fx="lite"] .fx-sparkles,
+html[data-fx="lite"] .fx-crumbs {
+  display: none !important;
+}
+
+.fx-orb-1 {
+  width: min(42vw, 28rem);
+  height: min(42vw, 28rem);
+  top: -8%;
+  left: -6%;
+  background: radial-gradient(circle at 40% 40%, #9fe3c0 0%, transparent 68%);
+  animation: orb-drift-a 22s ease-in-out infinite alternate;
+}
+
+.fx-orb-2 {
+  width: min(36vw, 24rem);
+  height: min(36vw, 24rem);
+  top: 35%;
+  right: -10%;
+  background: radial-gradient(circle at 50% 50%, #c8f560 0%, transparent 68%);
+  animation: orb-drift-b 26s ease-in-out infinite alternate;
+}
+
+.fx-orb-3 {
+  width: min(30vw, 20rem);
+  height: min(30vw, 20rem);
+  bottom: 5%;
+  left: 25%;
+  background: radial-gradient(circle at 50% 50%, #b8d9ff 0%, transparent 68%);
+  animation: orb-drift-c 20s ease-in-out infinite alternate;
+}
+
+@keyframes orb-drift-a {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(8%, 12%) scale(1.12);
+  }
+}
+
+@keyframes orb-drift-b {
+  from {
+    transform: translate(0, 0) scale(1.05);
+  }
+  to {
+    transform: translate(-10%, -8%) scale(0.92);
+  }
+}
+
+@keyframes orb-drift-c {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(12%, -14%) scale(1.15);
+  }
+}
+
+/* —— Sparkle field —— */
+.fx-sparkles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.fx-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--learn-active-bright, #c8f560);
+  opacity: 0;
+  animation: sparkle-twinkle var(--dur, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes sparkle-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  40% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.2;
+    transform: scale(0.7);
+  }
+}
+
+/* —— Page enter —— */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html[data-fx="lite"] body
+  > :not(.atmosphere):not(.fx-orbs):not(.fx-spotlight):not(.fx-sparkles):not(.fx-crumbs):not(.float-layer):not(.lj-cursor),
+html[data-fx="off"] body
+  > :not(.atmosphere):not(.fx-orbs):not(.fx-spotlight):not(.fx-sparkles):not(.fx-crumbs):not(.float-layer):not(.lj-cursor) {
+  animation: none !important;
+}
+
+body
+  > :not(.atmosphere):not(.fx-orbs):not(.fx-spotlight):not(.fx-sparkles):not(.fx-crumbs):not(.float-layer):not(.lj-cursor) {
+  animation: page-enter 0.65s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+/* —— Shine sweep on interactive surfaces —— */
+.cta,
+.choice-btn,
+.ws-btn,
+.account-chip,
+.mic-btn,
+.text-btn,
+.chest-btn,
+.guidebook,
+.panel,
+.settings-panel,
+.auth-panel,
+.card-list article,
+.results-card,
+.step-stage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta::after,
+.choice-btn::after,
+.ws-btn::after,
+.mic-btn::after,
+.text-btn::after,
+.chest-btn::after,
+.guidebook::after,
+.account-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cta:hover::after,
+.choice-btn:hover::after,
+.ws-btn:hover::after,
+.mic-btn:hover::after,
+.text-btn:hover::after,
+.chest-btn:hover::after,
+.guidebook:hover::after,
+.account-chip:hover::after {
+  animation: shine-sweep 0.75s ease;
+}
+
+@keyframes shine-sweep {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* —— Soft float for brand / mascots —— */
+.brand,
+.auth-brand,
+.learn-brand {
+  text-shadow: 0 2px 24px var(--learn-glow, rgba(200, 245, 96, 0.25));
+}
+
+.milo,
+.path-milo,
+.milo-coach img,
+.milo-workspace img {
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.28));
+}
+
+html[data-fx="full"] .milo,
+html[data-fx="full"] .path-milo,
+html[data-fx="full"] .milo-coach img,
+html[data-fx="full"] .milo-workspace img {
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 20px var(--learn-glow));
+}
+
+/* —— Glow breathing on current path node —— */
+.path-node.is-current {
+  animation: node-pulse 1.8s ease-in-out infinite, node-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes node-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 6px 0 var(--node-current-shadow),
+      0 0 0 6px var(--learn-glow),
+      0 14px 32px rgba(200, 245, 96, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 6px 0 var(--node-current-shadow),
+      0 0 0 12px transparent,
+      0 18px 40px rgba(200, 245, 96, 0.55);
+  }
+}
+
+/* —— Nav active indicator pulse —— */
+.learn-nav a.is-active {
+  animation: nav-active-glow 2.8s ease-in-out infinite;
+}
+
+@keyframes nav-active-glow {
+  0%,
+  100% {
+    box-shadow: inset 3px 0 0 var(--learn-active);
+  }
+  50% {
+    box-shadow:
+      inset 3px 0 0 var(--learn-active),
+      0 0 20px var(--learn-glow);
+  }
+}
+
+/* —— Auth atmosphere boost —— */
+.auth-body .atmosphere .glow {
+  animation: glow-breathe 10s ease-in-out infinite alternate;
+}
+
+.auth-body .glow-a {
+  animation-delay: 0s;
+}
+.auth-body .glow-b {
+  animation-delay: -3s;
+}
+.auth-body .glow-c {
+  animation-delay: -6s;
+}
+
+@keyframes glow-breathe {
+  from {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.15) translate(3%, -2%);
+    opacity: 0.65;
+  }
+}
+
+.auth-shell {
+  animation: auth-rise 0.7s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.auth-panel {
+  box-shadow:
+    8px 8px 0 color-mix(in srgb, var(--ink) 14%, transparent),
+    0 24px 60px rgba(0, 0, 0, 0.12),
+    0 0 0 1px var(--glass-border),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+.auth-panel h1 {
+  background: linear-gradient(120deg, var(--ink) 20%, var(--learn-active) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html[data-theme="dark"] .auth-panel h1 {
+  background: linear-gradient(120deg, #f4fff8 10%, #c8f560 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.auth-field input {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s var(--ease-spring, cubic-bezier(0.34, 1.45, 0.64, 1));
+}
+
+.auth-field input:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px var(--learn-glow), 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* —— Landing hero extras —— */
+.hero .brand span {
+  background: linear-gradient(115deg, var(--deep) 20%, var(--learn-active) 70%, var(--mint) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: brand-sheen 7s ease-in-out infinite;
+}
+
+html[data-theme="dark"] .hero .brand span {
+  background: linear-gradient(115deg, #c8f560 10%, #9fe3c0 50%, #f4fff8 90%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes brand-sheen {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+.scroll-hint {
+  animation: scroll-bounce 2.2s ease-in-out infinite !important;
+}
+
+@keyframes scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.chip {
+  animation: chip-float var(--chip-dur, 7s) ease-in-out infinite;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.chip-1 {
+  --chip-dur: 7.2s;
+  animation-delay: 0s;
+}
+.chip-2 {
+  --chip-dur: 8.1s;
+  animation-delay: -1.2s;
+}
+.chip-3 {
+  --chip-dur: 6.4s;
+  animation-delay: -2.1s;
+}
+.chip-4 {
+  --chip-dur: 7.8s;
+  animation-delay: -0.6s;
+}
+.chip-5 {
+  --chip-dur: 9s;
+  animation-delay: -3s;
+}
+.chip-6 {
+  --chip-dur: 6.8s;
+  animation-delay: -1.8s;
+}
+
+@keyframes chip-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, -2deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(calc(var(--rot, -2deg) + 2deg));
+  }
+}
+
+.code-backdrop {
+  animation: code-drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes code-drift {
+  from {
+    transform: rotate(-2deg) translateY(0);
+  }
+  to {
+    transform: rotate(-1deg) translateY(-12px);
+  }
+}
+
+/* —— Cards / panels magnetic lift —— */
+.panel:hover,
+.settings-panel:hover,
+.card-list article:hover,
+.step-stage:hover,
+.workspace-editors:hover,
+.workspace-preview:hover {
+  transform: translateY(-3px);
+}
+
+.unit-banner {
+  animation: banner-enter 0.7s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+@keyframes banner-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* —— Stat pills shimmer —— */
+.stat-pill {
+  background:
+    linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.12) 45%,
+      transparent 60%
+    ),
+    var(--learn-panel);
+  background-size: 220% 100%, auto;
+  animation: pill-shimmer 5s ease-in-out infinite;
+}
+
+@keyframes pill-shimmer {
+  0%,
+  100% {
+    background-position: 120% 0, 0 0;
+  }
+  50% {
+    background-position: -20% 0, 0 0;
+  }
+}
+
+/* —— Lesson progress glow —— */
+.step-progress-fill {
+  position: relative;
+}
+
+.step-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 100%;
+  background: #fff;
+  filter: blur(4px);
+  opacity: 0.65;
+  border-radius: inherit;
+}
+
+/* —— Code editor caret glow feel —— */
+.code-editor:focus,
+.ws-code:focus {
+  animation: editor-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes editor-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px var(--learn-glow),
+      0 12px 32px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px var(--learn-glow),
+      0 16px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* —— Results confetti-ish dots —— */
+.results-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 20%, var(--learn-active-bright) 0 2px, transparent 3px),
+    radial-gradient(circle at 88% 30%, #9fe3c0 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 78%, var(--learn-active) 0 2px, transparent 3px),
+    radial-gradient(circle at 25% 85%, #ffe29a 0 2px, transparent 3px);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: confetti-drift 6s ease-in-out infinite alternate;
+}
+
+@keyframes confetti-drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+/* —— Theme option bounce —— */
+.theme-option.is-active .material-symbols-outlined {
+  animation: icon-spin-soft 0.7s var(--ease-spring, cubic-bezier(0.34, 1.45, 0.64, 1));
+}
+
+@keyframes icon-spin-soft {
+  from {
+    transform: scale(0.7) rotate(-20deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* —— Knowledge / settings headings —— */
+.knowledge-page h1,
+.settings-main .unit-banner h1,
+.workspace-toolbar h1,
+.lesson-shell h1 {
+  background: linear-gradient(120deg, var(--learn-text-bright) 30%, var(--learn-active) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* —— Floating code crumbs on app pages —— */
+.fx-crumbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.fx-crumb {
+  position: absolute;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
+  color: color-mix(in srgb, var(--learn-muted) 55%, transparent);
+  white-space: nowrap;
+  opacity: 0.35;
+  animation: crumb-float var(--dur, 12s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes crumb-float {
+  0% {
+    transform: translateY(110vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  90% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateY(-10vh) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+/* —— Reveal on scroll helper —— */
+[data-fx-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.45s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform 0.45s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  transition-delay: var(--fx-delay, 0ms);
+}
+
+[data-fx-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* —— Button press micro —— */
+.cta:active,
+.ws-btn:active,
+.choice-btn:active,
+.theme-option:active,
+.path-node:active {
+  filter: brightness(0.97);
+}
+
+/* —— Learn aside panels stagger —— */
+.learn-aside .stat-pill {
+  animation: fade-rise 0.5s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.learn-aside .stat-pill:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.learn-aside .stat-pill:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.learn-aside .stat-pill:nth-child(3) {
+  animation-delay: 0.19s;
+}
+.learn-aside .panel {
+  animation: fade-rise 0.55s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.learn-aside .panel:nth-of-type(1) {
+  animation-delay: 0.15s;
+}
+.learn-aside .panel:nth-of-type(2) {
+  animation-delay: 0.25s;
+}
+.learn-aside .panel:nth-of-type(3) {
+  animation-delay: 0.35s;
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* —— Selection / focus ring polish —— */
+:focus-visible {
+  outline: 3px solid var(--learn-active, #c8f560);
+  outline-offset: 3px;
+}
+
+/* —— Landing cards / photos —— */
+.scatter-photo,
+.note,
+.path-card,
+.concept-card,
+.quote-card,
+.rhythm-item {
+  transition:
+    transform 0.35s var(--ease-spring, cubic-bezier(0.34, 1.45, 0.64, 1)),
+    box-shadow 0.35s ease,
+    filter 0.35s ease !important;
+}
+
+.scatter-photo:hover {
+  transform: scale(1.04) rotate(0deg) !important;
+  z-index: 5;
+  filter: saturate(1.1);
+  box-shadow: 10px 14px 0 color-mix(in srgb, var(--cta-ink, #0b1f18) 35%, transparent);
+}
+
+.note:hover {
+  transform: scale(1.06) rotate(0deg) !important;
+  z-index: 6;
+}
+
+.path-card:hover,
+.concept-card:hover,
+.quote-card:hover,
+.rhythm-item:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14), 0 0 0 1px var(--learn-border);
+}
+
+/* —— Path board ambient ring —— */
+.path-board::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  width: min(100%, 18rem);
+  height: 80%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, var(--learn-glow) 0%, transparent 70%);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: path-aura 5s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes path-aura {
+  from {
+    opacity: 0.25;
+    transform: translateX(-50%) scale(0.95);
+  }
+  to {
+    opacity: 0.55;
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+/* —— Workspace typing feel —— */
+.workspace-editors {
+  position: relative;
+}
+
+.workspace-editors::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--learn-active), transparent);
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: scan-line 3.5s linear infinite;
+  z-index: 3;
+  opacity: 0.7;
+}
+
+@keyframes scan-line {
+  0% {
+    background-position: -40% 0;
+  }
+  100% {
+    background-position: 140% 0;
+  }
+}
+
+/* —— Lesson shell floating accent —— */
+.lesson-shell::after {
+  content: "";
+  position: fixed;
+  width: 8rem;
+  height: 8rem;
+  right: 4%;
+  bottom: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--learn-glow), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: orb-drift-c 12s ease-in-out infinite alternate;
+}
+
+/* —— Reduced motion —— */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  .fx-orb,
+  .fx-sparkle,
+  .fx-crumb,
+  .fx-spotlight,
+  .chip,
+  .code-backdrop,
+  .scroll-hint,
+  .path-node.is-current,
+  .learn-nav a.is-active,
+  .stat-pill,
+  .step-progress-fill,
+  .results-card::after,
+  .hero .brand span,
+  .auth-body .atmosphere .glow,
+  .path-board::before,
+  .workspace-editors::before,
+  .lesson-shell::after,
+  body
+    > :not(.atmosphere):not(.fx-orbs):not(.fx-spotlight):not(.fx-sparkles):not(.fx-crumbs):not(.float-layer):not(.lj-cursor) {
+    animation: none !important;
+  }
+
+  [data-fx-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+
+  body::before,
+  body::after {
+    display: none;
+  }
+
+  .fx-spotlight,
+  .fx-orbs,
+  .fx-sparkles,
+  .fx-crumbs {
+    display: none !important;
+  }
+}
+
+
+/* —— Click ripple (used by effects.js) —— */
+.fx-ripple {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  z-index: 5;
+  animation: fx-ripple 0.5s ease-out forwards;
+}
+
+@keyframes fx-ripple {
+  to {
+    transform: scale(22);
+    opacity: 0;
+  }
+}
+
+/* —— Spotlight cheaper —— */
+.fx-spotlight {
+  contain: strict;
+  will-change: auto;
+}
+
+html[data-fx="balanced"] .fx-spotlight {
+  opacity: 0.4;
+}
+
+html[data-fx="lite"] .path-board::before,
+html[data-fx="lite"] .lesson-shell::after,
+html[data-fx="lite"] .workspace-editors::before,
+html[data-fx="off"] .path-board::before,
+html[data-fx="off"] .lesson-shell::after,
+html[data-fx="off"] .workspace-editors::before {
+  display: none !important;
+}
+
+html[data-fx="lite"] .stat-pill,
+html[data-fx="lite"] .path-node.is-current,
+html[data-fx="lite"] .learn-nav a.is-active,
+html[data-fx="off"] .stat-pill,
+html[data-fx="off"] .path-node.is-current,
+html[data-fx="off"] .learn-nav a.is-active {
+  animation: none !important;
+}
+
+html[data-fx="balanced"] .fx-crumb,
+html[data-fx="lite"] body::after {
+  display: none !important;
+}

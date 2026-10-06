@@ -37,6 +37,13 @@ import {
   verifyOtp,
 } from "./auth.js";
 import { sendOtpEmail, mailConfigured, mailProvider, verifyMailTransport } from "./mail.js";
+import {
+  rateLimit,
+  securityHeaders,
+  isBlockedPath,
+  assertSafeStatic,
+  MAX_BODY_BYTES,
+} from "./security.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
@@ -58,12 +65,14 @@ const MIME = {
   ".ico": "image/x-icon",
 };
 
-function sendJson(res, status, body) {
+function sendJson(res, status, body, extraHeaders = {}) {
+  securityHeaders(res);
   const data = JSON.stringify(body);
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Content-Length": Buffer.byteLength(data),
     "Cache-Control": "no-store",
+    ...extraHeaders,
   });
   res.end(data);
 }
@@ -71,7 +80,16 @@ function sendJson(res, status, body) {
 function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on("data", (c) => chunks.push(c));
+    let size = 0;
+    req.on("data", (c) => {
+      size += c.length;
+      if (size > MAX_BODY_BYTES) {
+        reject(new Error("Body too large"));
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
     req.on("end", () => {
       const raw = Buffer.concat(chunks).toString("utf8");
       if (!raw) return resolve({});
@@ -83,6 +101,15 @@ function readBody(req) {
     });
     req.on("error", reject);
   });
+}
+
+function guard(req, res, lane = "default") {
+  const limited = rateLimit(req, lane);
+  if (!limited.ok) {
+    sendJson(res, 429, { error: limited.error }, { "Retry-After": String(limited.retryAfter) });
+    return false;
+  }
+  return true;
 }
 
 function bearer(req) {
@@ -180,24 +207,27 @@ async function startSignup({ username, email, password }) {
 
 async function handleApi(req, res, url) {
   try {
+    if (!guard(req, res, "default")) return;
+
     if (req.method === "GET" && url.pathname === "/api/health") {
-      let mail = { configured: mailConfigured() };
+      let mail = { configured: mailConfigured(), provider: mailProvider() };
       if (mail.configured) {
         try {
           const verified = await verifyMailTransport();
-          mail = { ...mail, verified: verified.ok, user: verified.user };
-        } catch (err) {
-          mail = { ...mail, verified: false, error: err.message };
+          mail = { ...mail, verified: verified.ok };
+        } catch {
+          mail = { ...mail, verified: false };
         }
       }
+      // Do not expose filesystem DB paths to clients
       return sendJson(res, 200, {
         ok: true,
-        db: dbPath,
-        mail,
+        mail: { configured: mail.configured, provider: mail.provider, verified: mail.verified },
       });
     }
 
     if (req.method === "POST" && url.pathname === "/api/register/start") {
+      if (!guard(req, res, "auth")) return;
       const body = await readBody(req);
       const username = normalizeUsername(body.username);
       const email = normalizeEmail(body.email);
@@ -210,6 +240,7 @@ async function handleApi(req, res, url) {
     }
 
     if (req.method === "POST" && url.pathname === "/api/register/resend") {
+      if (!guard(req, res, "otp")) return;
       const body = await readBody(req);
       const pending = getPendingSignup(body.pendingId);
       if (!pending) return sendJson(res, 404, { error: "Signup session expired. Start again." });
@@ -246,6 +277,7 @@ async function handleApi(req, res, url) {
     }
 
     if (req.method === "POST" && url.pathname === "/api/register/verify") {
+      if (!guard(req, res, "otp")) return;
       const body = await readBody(req);
       const pending = getPendingSignup(body.pendingId);
       if (!pending) return sendJson(res, 404, { error: "Signup session expired. Start again." });
@@ -291,6 +323,7 @@ async function handleApi(req, res, url) {
 
     // Backward-compatible alias: old clients hit /api/register
     if (req.method === "POST" && url.pathname === "/api/register") {
+      if (!guard(req, res, "auth")) return;
       const body = await readBody(req);
       const username = normalizeUsername(body.username);
       const email = normalizeEmail(body.email);
@@ -303,6 +336,7 @@ async function handleApi(req, res, url) {
     }
 
     if (req.method === "POST" && url.pathname === "/api/login") {
+      if (!guard(req, res, "auth")) return;
       const body = await readBody(req);
       const username = normalizeUsername(body.username);
       const password = body.password;
@@ -368,14 +402,23 @@ async function handleApi(req, res, url) {
 }
 
 function serveStatic(req, res, url) {
+  securityHeaders(res);
+  if (isBlockedPath(url.pathname)) {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    return res.end("Not found");
+  }
   let rel = url.pathname === "/" ? "/index.html" : url.pathname;
   let filePath = safeJoin(ROOT, rel);
-  if (!filePath) {
-    res.writeHead(403);
+  if (!filePath || !assertSafeStatic(ROOT, filePath)) {
+    res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
     return res.end("Forbidden");
   }
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, "index.html");
+    if (!assertSafeStatic(ROOT, filePath)) {
+      res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+      return res.end("Forbidden");
+    }
   }
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
@@ -387,11 +430,25 @@ function serveStatic(req, res, url) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
-  if (url.pathname.startsWith("/api/")) {
-    return handleApi(req, res, url);
+  try {
+    securityHeaders(res);
+    const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+    if (req.method === "OPTIONS") {
+      res.writeHead(204);
+      return res.end();
+    }
+    if (url.pathname.startsWith("/api/")) {
+      return handleApi(req, res, url);
+    }
+    if (!guard(req, res, "default")) return;
+    return serveStatic(req, res, url);
+  } catch (err) {
+    console.error(err);
+    if (!res.headersSent) {
+      res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Server error");
+    }
   }
-  return serveStatic(req, res, url);
 });
 
 server.listen(PORT, () => {

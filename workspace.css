@@ -44,23 +44,26 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.65rem 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--learn-border-strong);
   border-radius: 10px;
-  background: #163328;
-  color: #e7f4ec;
+  background: var(--learn-panel-2);
+  color: var(--learn-text);
   font-family: var(--font-display);
   font-weight: 700;
   cursor: pointer;
+  transition: transform 0.18s var(--ease-spring), background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ws-btn:hover {
-  background: #1c3d31;
+  background: color-mix(in srgb, var(--learn-active) 14%, var(--learn-panel-2));
+  transform: translateY(-1px);
 }
 
 .ws-btn.ws-run {
-  border-color: rgba(200, 245, 96, 0.45);
-  background: rgba(200, 245, 96, 0.16);
+  border-color: color-mix(in srgb, var(--learn-active) 55%, transparent);
+  background: var(--learn-accent-soft);
   color: var(--learn-active);
+  box-shadow: 0 6px 18px var(--learn-glow);
 }
 
 .workspace-grid {
@@ -76,18 +79,19 @@
   display: flex;
   flex-direction: column;
   min-height: 28rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  background: #10261d;
+  border: 1px solid var(--learn-border);
+  border-radius: var(--radius-md);
+  background: var(--learn-panel);
   overflow: hidden;
+  box-shadow: var(--learn-shadow);
 }
 
 .ws-tabs {
   display: flex;
   gap: 0.25rem;
   padding: 0.45rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: #0d1f18;
+  border-bottom: 1px solid var(--learn-border);
+  background: var(--learn-panel-2);
 }
 
 .ws-tab {
@@ -99,11 +103,12 @@
   font-family: var(--font-display);
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .ws-tab.is-active,
 .ws-tab:hover {
-  background: rgba(200, 245, 96, 0.12);
+  background: var(--learn-accent-soft);
   color: var(--learn-active);
 }
 
@@ -114,9 +119,9 @@
   padding: 1rem;
   border: 0;
   resize: none;
-  background: #0c1a14;
-  color: #d7ebe0;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: var(--font-mono);
   font-size: 0.92rem;
   line-height: 1.5;
   outline: none;
@@ -140,10 +145,10 @@
   max-height: 10rem;
   overflow: auto;
   padding: 0.75rem 0.9rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0a1510;
-  color: #b7d0c2;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  border-top: 1px solid var(--learn-border);
+  background: var(--code-bg);
+  color: color-mix(in srgb, var(--code-fg) 80%, #9fe3c0);
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   white-space: pre-wrap;
 }
@@ -179,11 +184,11 @@
 .milo-workspace-panel {
   pointer-events: auto;
   padding: 0.85rem 0.9rem 0.95rem;
-  border: 1px solid rgba(200, 245, 96, 0.28);
+  border: 1px solid color-mix(in srgb, var(--learn-active) 35%, transparent);
   border-radius: 16px;
-  background: rgba(12, 26, 20, 0.94);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(8px);
+  background: var(--glass);
+  box-shadow: var(--learn-shadow-deep);
+  backdrop-filter: blur(12px);
 }
 
 .milo-workspace-label {
@@ -202,7 +207,7 @@
 .milo-workspace-status,
 .milo-workspace-text {
   margin: 0 0 0.55rem;
-  color: #d7ebe0;
+  color: var(--learn-text);
   font-size: 0.92rem;
   line-height: 1.4;
 }
@@ -218,9 +223,9 @@
   gap: 0.4rem;
   width: 100%;
   padding: 0.7rem 0.8rem;
-  border: 1px solid rgba(200, 245, 96, 0.4);
+  border: 1px solid color-mix(in srgb, var(--learn-active) 45%, transparent);
   border-radius: 999px;
-  background: rgba(200, 245, 96, 0.14);
+  background: var(--learn-accent-soft);
   color: var(--learn-active);
   font-family: var(--font-display);
   font-weight: 800;
@@ -237,26 +242,37 @@
 }
 
 .settings-main {
-  max-width: 40rem;
+  max-width: 42rem;
 }
 
 .settings-panel {
-  margin-bottom: 1rem;
-  padding: 1.1rem 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  background: #10261d;
+  margin-bottom: 1.1rem;
+  padding: 1.25rem 1.3rem;
+  border: 1px solid var(--learn-border);
+  border-radius: var(--radius-lg);
+  background: var(--learn-panel);
+  box-shadow: var(--learn-shadow), var(--learn-inset);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s ease;
+}
+
+.settings-panel:hover {
+  box-shadow: var(--learn-shadow-deep), var(--learn-inset);
 }
 
 .settings-panel h2 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.85rem;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: var(--learn-text-bright);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .settings-panel p {
   margin: 0.4rem 0;
-  color: #d7ebe0;
+  color: var(--learn-text);
 }
 
 .settings-panel .auth-hint {
@@ -264,12 +280,111 @@
   color: var(--learn-muted);
 }
 
+.settings-lede {
+  margin: -0.35rem 0 1rem !important;
+  color: var(--learn-muted) !important;
+  font-size: 0.95rem;
+}
+
+.theme-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.theme-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1.25rem 1rem 1.1rem;
+  border: 2px solid var(--learn-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--learn-panel-2);
+  color: var(--learn-text);
+  font-family: var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    transform 0.2s var(--ease-spring),
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.theme-option .material-symbols-outlined {
+  font-size: 2.1rem;
+  font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 40;
+  transition: transform 0.35s var(--ease-spring);
+}
+
+.theme-option[data-theme-pick="light"] .material-symbols-outlined {
+  color: #e3a008;
+  filter: drop-shadow(0 0 10px rgba(255, 196, 60, 0.55));
+}
+
+.theme-option[data-theme-pick="dark"] .material-symbols-outlined {
+  color: #c4d4ff;
+  filter: drop-shadow(0 0 10px rgba(160, 180, 255, 0.45));
+}
+
+.theme-option:hover {
+  transform: translateY(-3px);
+  border-color: var(--learn-active);
+  box-shadow: 0 12px 28px var(--learn-glow);
+}
+
+.theme-option:hover .material-symbols-outlined {
+  transform: scale(1.12) rotate(-6deg);
+}
+
+.theme-option.is-active {
+  border-color: var(--learn-active);
+  background: var(--learn-accent-soft);
+  box-shadow: 0 0 0 3px var(--learn-glow), var(--learn-shadow);
+}
+
+.theme-option.is-active::after {
+  content: "check_circle";
+  font-family: "Material Symbols Outlined";
+  font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  color: var(--learn-active);
+  font-size: 1.25rem;
+}
+
+.theme-option-label {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.theme-option-swatch {
+  width: 100%;
+  height: 2.4rem;
+  border-radius: 10px;
+  border: 1px solid var(--learn-border);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+}
+
+.theme-option[data-theme-pick="light"] .theme-option-swatch {
+  background: linear-gradient(90deg, #f4fbf7 0%, #c8f560 45%, #9fe3c0 100%);
+}
+
+.theme-option[data-theme-pick="dark"] .theme-option-swatch {
+  background: linear-gradient(90deg, #0c1a14 0%, #163328 45%, #c8f560 100%);
+}
+
 .settings-danger {
-  border-color: rgba(255, 107, 107, 0.35);
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 .settings-danger h2 {
-  color: #ff8d8d;
+  color: var(--danger);
 }
 
 .delete-id-pill {
@@ -277,9 +392,29 @@
   margin-left: 0.25rem;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  background: rgba(255, 107, 107, 0.14);
-  color: #ffb0b0;
+  background: var(--danger-soft);
+  color: var(--danger);
   font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.fx-picker {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.fx-picker .theme-option-swatch {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .fx-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .theme-picker {
+    grid-template-columns: 1fr;
+  }
 }
 
 .cta.cta-danger {

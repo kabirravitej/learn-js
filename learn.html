@@ -3,18 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="theme-boot.js"></script>
     <title>Learn Path — Learn JS</title>
     <link rel="icon" href="logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="learn.css" />
     <link rel="stylesheet" href="lesson-ui.css" />
+    <link rel="stylesheet" href="effects.css" />
+    <link rel="stylesheet" href="cursor.css" />
   </head>
   <body class="learn-body">
     <div class="learn-app">
@@ -53,12 +56,14 @@
       </nav>
 
       <main class="learn-main">
-        <header class="unit-banner anim-fade-up">
+        <header class="path-intro anim-fade-up">
           <div>
-            <p id="unit-kicker">Section 1 · Unit 1</p>
-            <h1 id="unit-title">How JavaScript Got Here</h1>
-            <p id="unit-blurb" style="text-transform: none; letter-spacing: 0; font-weight: 600; margin-top: 0.35rem">
-              Many quick checks per lesson. Pause anytime.
+            <p class="path-intro-kicker">Your path · 90 units</p>
+            <h1>All units, one scroll</h1>
+            <p class="path-intro-blurb">
+              Finish a unit and keep scrolling — the next one is waiting below. Locked lessons show a
+              lock until you reach them. The full path goes through objects, DOM, classes, maps,
+              async, and bridges toward Node, React, and building real sites.
             </p>
           </div>
           <a class="guidebook" href="index.html#path-heading"
@@ -66,10 +71,7 @@
           >
         </header>
 
-        <div class="path-board" id="path-board">
-          <img class="path-milo" id="path-milo" src="milo.png" alt="" width="676" height="369" />
-          <ol class="path-list" id="path-list"></ol>
-        </div>
+        <div class="path-units" id="path-units"></div>
       </main>
 
       <aside class="learn-aside" aria-label="Progress">
@@ -109,6 +111,9 @@
               <span class="material-symbols-outlined">psychology</span> Memory — go a layer deeper
             </li>
             <li>
+              <span class="material-symbols-outlined">terminal</span> Code lab — type & run real JS
+            </li>
+            <li>
               <span class="material-symbols-outlined">quiz</span> Practice — speak flashcards
             </li>
             <li>
@@ -128,10 +133,13 @@
       </aside>
     </div>
 
+    <script src="theme.js"></script>
+    <script src="effects.js"></script>
+    <script src="cursor.js"></script>
     <script src="auth-client.js"></script>
     <script src="account-menu.js"></script>
-    <script src="curriculum.js"></script>
-    <script src="curriculum-enrich.js"></script>
+    <!-- Slim path meta only (~47KB) — full lesson bodies load on lesson.html -->
+    <script src="curriculum-path.js"></script>
     <script src="progress.js"></script>
     <script src="learn.js"></script>
   </body>

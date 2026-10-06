@@ -1,0 +1,131 @@
+/* Pure SVG custom cursor — GPU transform (no left/top layout thrash) */
+
+html.has-lj-cursor,
+html.has-lj-cursor * {
+  cursor: none !important;
+}
+
+.lj-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  pointer-events: none;
+  z-index: 2147483000;
+  will-change: transform;
+  contain: layout style;
+  animation: none !important;
+  filter: none !important;
+  transform: translate3d(-100px, -100px, 0);
+}
+
+.lj-cursor-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 245, 96, 0.5) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 0.2s ease,
+    transform 0.22s ease;
+}
+
+.lj-cursor.is-clickable .lj-cursor-glow {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.lj-cursor-layer {
+  position: absolute;
+  inset: 0;
+  width: 32px;
+  height: 32px;
+  display: block;
+  overflow: visible;
+  transition:
+    opacity 0.18s ease,
+    transform 0.2s ease;
+}
+
+.lj-cursor-default {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lj-cursor-select {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+.lj-cursor.is-clickable .lj-cursor-default {
+  opacity: 0;
+  transform: scale(1.08);
+}
+
+.lj-cursor.is-clickable .lj-cursor-select {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lj-cursor.is-down .lj-cursor-default {
+  transform: scale(0.88);
+}
+
+.lj-cursor.is-down.is-clickable .lj-cursor-select {
+  transform: scale(0.9);
+}
+
+.lj-cursor.is-down.is-clickable .lj-cursor-glow {
+  transform: scale(1);
+  opacity: 0.65;
+}
+
+html[data-theme="dark"] .lj-cursor {
+  color: #f4fff8;
+}
+
+html[data-theme="dark"] .lj-cursor-glow {
+  background: radial-gradient(circle, rgba(200, 245, 96, 0.55) 0%, transparent 70%);
+}
+
+.lj-cursor.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (pointer: coarse) {
+  html.has-lj-cursor,
+  html.has-lj-cursor * {
+    cursor: auto !important;
+  }
+
+  .lj-cursor {
+    display: none !important;
+  }
+}
+
+html[data-fx="lite"] .lj-cursor,
+html[data-fx="off"] .lj-cursor {
+  display: none !important;
+}
+
+html[data-fx="lite"].has-lj-cursor,
+html[data-fx="lite"].has-lj-cursor *,
+html[data-fx="off"].has-lj-cursor,
+html[data-fx="off"].has-lj-cursor * {
+  cursor: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lj-cursor-layer,
+  .lj-cursor-glow {
+    transition-duration: 0.05s;
+  }
+}
