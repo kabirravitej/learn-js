@@ -1,6 +1,6 @@
 /**
  * 90-unit Learn JS roadmap (titles + blurbs).
- * Full lesson bodies ship in curriculum-batch-XX.js files.
+ * Full lesson bodies ship in curriculum/curriculum-batch-XX.js files.
  */
 window.LEARN_JS_ROADMAP = [
   // —— Batch 01 (Units 1–10): Foundations ——

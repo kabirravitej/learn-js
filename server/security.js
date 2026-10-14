@@ -6,9 +6,11 @@ import path from "node:path";
 
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_HITS = {
-  default: 120,
-  auth: 25,
-  otp: 12,
+  // API-only lanes (static files are NOT rate-limited)
+  api: 300,
+  auth: 40,
+  otp: 20,
+  default: 300,
 };
 
 /** @type {Map<string, { count: number, reset: number }>} */
@@ -24,11 +26,11 @@ function bucketKey(ip, lane) {
   return `${lane}:${ip}`;
 }
 
-export function rateLimit(req, lane = "default") {
+export function rateLimit(req, lane = "api") {
   const ip = clientIp(req);
   const key = bucketKey(ip, lane);
   const now = Date.now();
-  const max = MAX_HITS[lane] || MAX_HITS.default;
+  const max = MAX_HITS[lane] || MAX_HITS.api;
   let row = buckets.get(key);
   if (!row || now > row.reset) {
     row = { count: 0, reset: now + WINDOW_MS };
@@ -102,7 +104,6 @@ export function isBlockedPath(urlPath) {
   const base = path.posix.basename(lower);
   if (BLOCKED_NAMES.has(base)) return true;
   if (lower.includes("/.") && !lower.endsWith("/.well-known/")) {
-    // block dotfiles like /.git
     if (/(^|\/)\.(git|env|ssh|aws)/.test(lower)) return true;
   }
   return false;
@@ -115,7 +116,6 @@ export function assertSafeStatic(root, filePath) {
   if (!resolved.startsWith(rootResolved + path.sep) && resolved !== rootResolved) {
     return false;
   }
-  // Never serve the SQLite DB or server sources
   if (resolved.includes(`${path.sep}data${path.sep}`)) return false;
   if (resolved.includes(`${path.sep}server${path.sep}`)) return false;
   try {

@@ -2,13 +2,20 @@
   "name": "learn-js",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Learn JS — beginner JavaScript path with Milo",
   "scripts": {
     "install:server": "npm install --prefix server",
-    "start": "npm start --prefix server",
-    "dev": "npm run dev --prefix server"
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
   },
   "engines": {
     "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
+    "dotenv": "^16.6.1",
+    "nodemailer": "^10.0.14",
+    "resend": "^6.32.0"
   }
 }

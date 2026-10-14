@@ -1,6 +1,6 @@
 /**
  * Learn JS curriculum assembler — 90-unit path.
- * Full bodies live in curriculum-batch-XX.js; roadmap titles in curriculum-roadmap.js.
+ * Full bodies live in curriculum/curriculum-batch-XX.js; roadmap in curriculum-roadmap.js.
  */
 (function assembleCurriculum() {
   const roadmap = window.LEARN_JS_ROADMAP || [];

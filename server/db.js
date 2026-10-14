@@ -4,7 +4,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = path.join(__dirname, "..", "data");
+// Local: ./data — Vercel serverless: /tmp (only writable path; set DATA_DIR to override)
+const dataDir =
+  process.env.DATA_DIR ||
+  (process.env.VERCEL ? "/tmp/learnjs-data" : path.join(__dirname, "..", "data"));
 const dbPath = path.join(dataDir, "learnjs.sqlite");
 
 fs.mkdirSync(dataDir, { recursive: true });
