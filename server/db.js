@@ -14,8 +14,10 @@ fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new DatabaseSync(dbPath);
 
+// WAL can be flaky on some serverless /tmp mounts — use DELETE on Vercel
+const journalMode = process.env.VERCEL ? "DELETE" : "WAL";
 db.exec(`
-  PRAGMA journal_mode = WAL;
+  PRAGMA journal_mode = ${journalMode};
   PRAGMA foreign_keys = ON;
   PRAGMA busy_timeout = 5000;
   PRAGMA secure_delete = ON;

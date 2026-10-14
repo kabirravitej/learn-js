@@ -6,7 +6,10 @@ let transporter = null;
 let resendClient = null;
 
 function gasConfig() {
-  const url = String(process.env.GAS_WEBAPP_URL || process.env.GOOGLE_APPS_SCRIPT_URL || "").trim();
+  // Trim + remove accidental whitespace inside the URL (common Vercel paste bug)
+  const url = String(process.env.GAS_WEBAPP_URL || process.env.GOOGLE_APPS_SCRIPT_URL || "")
+    .trim()
+    .replace(/\s+/g, "");
   if (!url) return null;
   return {
     url,
@@ -196,10 +199,22 @@ async function sendViaGas({ to, otp, username }) {
     data = { raw };
   }
 
-  if (!res.ok || data?.ok === false || data?.success === false) {
-    const err = new Error(
-      data?.error || data?.message || raw || `Google Apps Script failed (${res.status})`
-    );
+  const looksLikeHtml = /^\s*</.test(raw) || /<!DOCTYPE|<html/i.test(raw);
+  const failed =
+    !res.ok ||
+    data?.ok === false ||
+    data?.success === false ||
+    (looksLikeHtml && data?.success !== true && data?.ok !== true);
+
+  if (failed) {
+    let msg =
+      data?.error || data?.message || (raw && !looksLikeHtml ? raw.slice(0, 240) : null);
+    if (!msg && looksLikeHtml) {
+      msg =
+        "Apps Script returned a web page instead of JSON. Redeploy the web app as Execute as: Me, Who has access: Anyone, and use the /exec URL.";
+    }
+    if (!msg) msg = `Google Apps Script failed (HTTP ${res.status})`;
+    const err = new Error(msg);
     err.code = "MAIL_SEND_FAILED";
     err.details = data;
     throw err;

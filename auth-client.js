@@ -40,14 +40,36 @@ window.LearnJSAuth = (() => {
     const headers = { "Content-Type": "application/json" };
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
-    const res = await fetch(`${apiBase()}${path}`, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const data = await res.json().catch(() => ({}));
+    let res;
+    try {
+      res = await fetch(`${apiBase()}${path}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (networkErr) {
+      const err = new Error(
+        networkErr?.message === "Failed to fetch"
+          ? "Network error — could not reach /api. Is the site deployed with API routes?"
+          : networkErr?.message || "Network error"
+      );
+      err.status = 0;
+      throw err;
+    }
+    const rawText = await res.text();
+    let data = {};
+    try {
+      data = rawText ? JSON.parse(rawText) : {};
+    } catch {
+      data = {};
+    }
     if (!res.ok) {
-      const err = new Error(data.error || "Request failed");
+      const msg =
+        data.error ||
+        data.message ||
+        (rawText && rawText.length < 200 && !/^\s*</.test(rawText) ? rawText : null) ||
+        `Request failed (HTTP ${res.status})`;
+      const err = new Error(msg);
       err.status = res.status;
       err.data = data;
       throw err;

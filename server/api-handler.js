@@ -52,7 +52,7 @@ export function sendJson(res, status, body, extraHeaders = {}) {
 }
 
 export async function readBody(req) {
-  // Vercel may already parse JSON onto req.body
+  // Vercel / some runtimes already attach parsed JSON
   if (req.body != null && typeof req.body === "object" && !Buffer.isBuffer(req.body)) {
     return req.body;
   }
@@ -63,30 +63,52 @@ export async function readBody(req) {
       throw new Error("Invalid JSON");
     }
   }
+  if (Buffer.isBuffer(req.body) && req.body.length) {
+    try {
+      return JSON.parse(req.body.toString("utf8"));
+    } catch {
+      throw new Error("Invalid JSON");
+    }
+  }
 
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    let size = 0;
-    req.on("data", (c) => {
-      size += c.length;
-      if (size > MAX_BODY_BYTES) {
-        reject(new Error("Body too large"));
-        req.destroy();
-        return;
-      }
-      chunks.push(c);
+  // Readable stream (Node IncomingMessage)
+  if (typeof req.on === "function") {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      let size = 0;
+      let settled = false;
+      const done = (fn, val) => {
+        if (settled) return;
+        settled = true;
+        fn(val);
+      };
+      req.on("data", (c) => {
+        size += c.length;
+        if (size > MAX_BODY_BYTES) {
+          done(reject, new Error("Body too large"));
+          try {
+            req.destroy();
+          } catch {
+            /* ignore */
+          }
+          return;
+        }
+        chunks.push(c);
+      });
+      req.on("end", () => {
+        const raw = Buffer.concat(chunks).toString("utf8");
+        if (!raw) return done(resolve, {});
+        try {
+          done(resolve, JSON.parse(raw));
+        } catch {
+          done(reject, new Error("Invalid JSON"));
+        }
+      });
+      req.on("error", (e) => done(reject, e));
     });
-    req.on("end", () => {
-      const raw = Buffer.concat(chunks).toString("utf8");
-      if (!raw) return resolve({});
-      try {
-        resolve(JSON.parse(raw));
-      } catch {
-        reject(new Error("Invalid JSON"));
-      }
-    });
-    req.on("error", reject);
-  });
+  }
+
+  return {};
 }
 
 function guard(req, res, lane = "api") {
